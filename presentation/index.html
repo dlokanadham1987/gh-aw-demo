@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GitHub Agentic Workflows — An Introduction</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="deck">
+
+  <!-- =========================================================
+       SLIDE 1 — Title
+  ========================================================== -->
+  <section class="slide active title">
+    <h1>GitHub Agentic Workflows</h1>
+    <div class="subtitle">Automation you write in English, not YAML.</div>
+    <div class="meta">
+      30-minute intro &middot; RealPage &middot; June 4, 2026<br>
+      Presented by Lokanadham Dasamukha
+    </div>
+    <aside class="notes">
+      Welcome the team. Set expectations: 30 minutes, awareness-only, no live coding.
+      The goal is curiosity, not mastery. Mention follow-up hands-on sessions are coming.
+    </aside>
+  </section>
+
+  <!-- =========================================================
+       SECTION 1 — Why we're here  (0:00 – 0:03)
+  ========================================================== -->
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:00 – 0:03</span> &middot; Why we're here</span>
+    <h2>The shift that's coming</h2>
+    <ul>
+      <li><span class="muted">2010s →</span> we wrote <strong>code</strong>. CI/CD ran it.</li>
+      <li><span class="muted">2020s →</span> we wrote <strong>YAML</strong>. Pipelines orchestrated it.</li>
+      <li><span class="accent">Now →</span> we write <strong>intent in English</strong>. Agents execute it.</li>
+    </ul>
+    <p class="muted" style="margin-top:1.4em">
+      GitHub Agentic Workflows (<code>gh-aw</code>) is GitHub's official answer.
+    </p>
+    <aside class="notes">
+      The audience just left TFS — they're already drinking from a firehose.
+      This slide says: the firehose is real, and there's another wave coming.
+      Don't oversell. Frame this as "awareness so you're not surprised in 6 months".
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:00 – 0:03</span> &middot; Why we're here</span>
+    <h2>Why this matters for our team</h2>
+    <div class="cols">
+      <div class="card">
+        <h3>What we do today</h3>
+        <ul>
+          <li>Hand-review every PR</li>
+          <li>Write the same status comment 50× a week</li>
+          <li>Chase test failures, perf regressions, doc drift</li>
+          <li>Manual release notes</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>What gh-aw lets us automate</h3>
+        <ul>
+          <li>PR triage and risk-flagging</li>
+          <li>Auto-remediation of failing tests</li>
+          <li>Performance hunting on a schedule</li>
+          <li>Release notes written from commit history</li>
+        </ul>
+      </div>
+    </div>
+    <aside class="notes">
+      Make it concrete to RealPage work. Don't claim the agent replaces reviewers —
+      it replaces the boring 80% so the reviewer can focus on the 20% that matters.
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:00 – 0:03</span> &middot; Why we're here</span>
+    <h2>What this session is — and isn't</h2>
+    <div class="cols">
+      <div class="card" style="border-color: var(--green)">
+        <h3 class="green">✓ This session is</h3>
+        <ul>
+          <li>Awareness &amp; curiosity</li>
+          <li>The mental model</li>
+          <li>One real workflow shown end-to-end</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color: var(--orange)">
+        <h3 class="orange">✗ This session is not</h3>
+        <ul>
+          <li>A live coding workshop</li>
+          <li>An adoption mandate</li>
+          <li>The full reference manual</li>
+        </ul>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:1.4em">
+      Hands-on working sessions are coming next.
+    </p>
+    <aside class="notes">
+      Setting expectations protects you. If someone asks "can you show me how to write one?"
+      reply: "Yes — that's the follow-up working session next week."
+    </aside>
+  </section>
+
+  <!-- =========================================================
+       SECTION 2 — The 30-second mental model  (0:03 – 0:09)
+  ========================================================== -->
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:03 – 0:09</span> &middot; Mental model</span>
+    <h2>The one diagram that unlocks everything</h2>
+    <div class="flow">
+      <div class="box you">YOU write<br><code>workflow.md</code></div>
+      <div class="arrow">→</div>
+      <div class="box gen"><code>gh aw compile</code><br>generates</div>
+      <div class="arrow">→</div>
+      <div class="box runtime">GitHub Actions<br>runs <code>workflow.lock.yml</code></div>
+    </div>
+    <p style="margin-top:2em">
+      You author <strong class="accent">intent</strong>. gh-aw produces <strong class="accent-2">YAML</strong>.
+      GitHub Actions runs it like any other pipeline — calling <strong class="green">Claude</strong> mid-job.
+    </p>
+    <aside class="notes">
+      This is THE diagram. Spend 90 seconds here. If they remember nothing else,
+      they should remember: .md is what you write, .lock.yml is what runs.
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:03 – 0:09</span> &middot; Mental model</span>
+    <h2>Two files. Both committed. Different jobs.</h2>
+    <div class="cols">
+      <div class="card">
+        <h3 class="accent">📝 <code>pr-summarizer.md</code></h3>
+        <p class="muted">Source. Hand-written. ~40 lines.</p>
+        <ul>
+          <li>Frontmatter: triggers, permissions, tools</li>
+          <li>Body: the prompt — in English</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 class="accent-2">⚙️ <code>pr-summarizer.lock.yml</code></h3>
+        <p class="muted">Generated. ~1000+ lines.</p>
+        <ul>
+          <li>Standard GitHub Actions YAML</li>
+          <li>Pinned action SHAs, safe-output guards</li>
+          <li>Reproducible build artifact</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:1.6em" class="muted">
+      Think of it like <code>package.json</code> + <code>package-lock.json</code> — you edit one, the tool maintains the other.
+    </p>
+    <aside class="notes">
+      The package-lock analogy lands well with web devs.
+      For TFS folks: ".md = build definition you author. .lock.yml = the resolved XML."
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:03 – 0:09</span> &middot; Mental model</span>
+    <h2>The three commands you'll ever need</h2>
+    <pre><code><span class="muted"># 1. One-time per repo — scaffolding only</span>
+gh aw init
+
+<span class="muted"># 2. Add a workflow (or hand-write the .md)</span>
+gh aw add pr-summarizer
+
+<span class="muted"># 3. Every time the .md changes</span>
+gh aw compile pr-summarizer
+</code></pre>
+    <p style="margin-top:1em">Then it's just <code>git add</code> · <code>git commit</code> · <code>git push</code>. GitHub takes over.</p>
+    <aside class="notes">
+      Three commands, in this order. That's the whole CLI for 95% of use cases.
+      "gh aw init" does NOT create workflows — it only sets up the folder structure.
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:03 – 0:09</span> &middot; Mental model</span>
+    <h2>What runs, step by step</h2>
+    <div class="flow" style="flex-direction:column; align-items:stretch; max-width:55em; margin:0 auto">
+      <div class="box you">1. Event fires (PR opened, push, schedule, …)</div>
+      <div class="arrow" style="text-align:center">↓</div>
+      <div class="box you">2. GitHub Actions reads <code>*.lock.yml</code> and starts a runner</div>
+      <div class="arrow" style="text-align:center">↓</div>
+      <div class="box gen">3. Setup job: pulls your prompt + Claude binary</div>
+      <div class="arrow" style="text-align:center">↓</div>
+      <div class="box runtime">4. <strong class="green">Agent job:</strong> Claude reads context, calls allowed tools</div>
+      <div class="arrow" style="text-align:center">↓</div>
+      <div class="box gen">5. Safe-outputs: validate what the agent wants to do</div>
+      <div class="arrow" style="text-align:center">↓</div>
+      <div class="box you">6. Conclusion: post the comment / open the PR / etc.</div>
+    </div>
+    <aside class="notes">
+      You don't need to memorize the 6 jobs — but it's good to know they exist
+      because the GitHub Actions UI shows them as separate boxes.
+    </aside>
+  </section>
+
+  <!-- =========================================================
+       SECTION 3 — English, not YAML  (0:09 – 0:15)
+  ========================================================== -->
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:09 – 0:15</span> &middot; English, not YAML</span>
+    <h2>The old way</h2>
+    <pre><code><span class="muted"># .github/workflows/pr-summary.yml — 200+ lines</span>
+name: PR Summary
+on: pull_request
+jobs:
+  summarize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get diff
+        run: git diff origin/main...HEAD &gt; diff.txt
+      - name: Call OpenAI
+        run: |
+          curl https://api.openai.com/... \
+            -d @prompt.json &gt; out.json
+      - name: Parse response
+        run: jq -r '.choices[0].text' out.json &gt; comment.md
+      - name: Post comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('comment.md', 'utf8');
+            github.rest.issues.createComment({ ... })
+      <span class="muted"># ... and 150 more lines of error handling</span>
+</code></pre>
+    <aside class="notes">
+      Most of the team has written something like this. Get a nod.
+      Then say: "What if you didn't have to?"
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:09 – 0:15</span> &middot; English, not YAML</span>
+    <h2>The new way</h2>
+    <pre><code><span class="muted"># pr-summarizer.md — the whole thing</span>
+---
+on: pull_request
+engine: claude
+tools:
+  github: { allowed: [get_pull_request_diff, list_commits] }
+safe-outputs:
+  add-comment: { max: 1 }
+---
+
+# PR Summarizer
+
+Read the PR diff and post ONE comment with:
+- **What changed** — 2-3 sentences
+- **Risk callouts** — 🔴 high / 🟡 medium / 🟢 low
+- **Test coverage** — gaps?
+- **Suggested next steps** — up to 3 items
+</code></pre>
+    <p class="muted" style="margin-top:0.8em">That's the whole workflow. ~25 lines.</p>
+    <aside class="notes">
+      Pause here. Let the difference sink in.
+      Then say: "The .lock.yml that gets generated is still 1000+ lines —
+      but you don't write it, you don't read it, you don't debug it."
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:09 – 0:15</span> &middot; English, not YAML</span>
+    <h2>Anatomy of an agentic workflow</h2>
+    <table>
+      <thead>
+        <tr><th>Section</th><th>What it controls</th><th>Example</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>on:</code></td>
+          <td>When does it run?</td>
+          <td><code>pull_request</code>, <code>schedule</code>, <code>issues</code></td>
+        </tr>
+        <tr>
+          <td><code>engine:</code></td>
+          <td>Which AI model</td>
+          <td><code>claude</code>, <code>copilot</code>, <code>codex</code></td>
+        </tr>
+        <tr>
+          <td><code>permissions:</code></td>
+          <td>What GitHub access</td>
+          <td><code>contents: read</code></td>
+        </tr>
+        <tr>
+          <td><code>tools:</code></td>
+          <td>What the agent <em>can</em> do</td>
+          <td><code>github</code>, <code>bash</code>, MCP servers</td>
+        </tr>
+        <tr>
+          <td><code>safe-outputs:</code></td>
+          <td>What it's allowed to <em>produce</em></td>
+          <td><code>add-comment</code>, <code>create-issue</code></td>
+        </tr>
+        <tr>
+          <td><em>Body</em></td>
+          <td>The prompt itself</td>
+          <td>Plain markdown instructions</td>
+        </tr>
+      </tbody>
+    </table>
+    <aside class="notes">
+      Don't read every row. Highlight "tools" and "safe-outputs" — these are the security model.
+      The agent CANNOT do anything not listed in tools, and CANNOT produce anything not in safe-outputs.
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:09 – 0:15</span> &middot; English, not YAML</span>
+    <h2>Why safe-outputs change everything</h2>
+    <div class="cols">
+      <div class="card" style="border-color: var(--red)">
+        <h3 class="red">Without safe-outputs</h3>
+        <p>Agent has a GitHub token. It can do <em>anything</em> the token allows: push to main, force-delete branches, leak secrets.</p>
+      </div>
+      <div class="card" style="border-color: var(--green)">
+        <h3 class="green">With safe-outputs</h3>
+        <p>Agent runs in a <em>sandboxed</em> job with no token. It writes <strong>intent</strong> to a file (e.g. "post this comment"). A separate job validates and executes it.</p>
+      </div>
+    </div>
+    <p style="margin-top:1.4em">
+      Translation: even a <strong>prompt-injection attack</strong> can't make the agent push code.
+    </p>
+    <aside class="notes">
+      This is THE security pitch. It's also what makes gh-aw different from
+      "give Claude an API token and hope". Security team will love this slide.
+    </aside>
+  </section>
+
+  <!-- =========================================================
+       SECTION 4 — TFS translation  (0:15 – 0:18)
+  ========================================================== -->
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:15 – 0:18</span> &middot; TFS translated</span>
+    <h2>Your TFS knowledge, translated</h2>
+    <table>
+      <thead>
+        <tr><th>TFS / Azure DevOps</th><th>GitHub</th><th>gh-aw</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Build definition (XML/YAML)</td>
+          <td>Workflow file (<code>.yml</code>)</td>
+          <td>Workflow file (<code>.md</code>)</td>
+        </tr>
+        <tr>
+          <td>Build agent</td>
+          <td>Runner (GitHub-hosted/self-hosted)</td>
+          <td>Runner (same)</td>
+        </tr>
+        <tr>
+          <td>Build triggers</td>
+          <td><code>on:</code> events</td>
+          <td><code>on:</code> events</td>
+        </tr>
+        <tr>
+          <td>Service connection</td>
+          <td>Repo / org secret</td>
+          <td>Repo / org secret (<code>ANTHROPIC_API_KEY</code>)</td>
+        </tr>
+        <tr>
+          <td>Variable group</td>
+          <td>Repo variables / environments</td>
+          <td>Repo variables / environments</td>
+        </tr>
+        <tr>
+          <td><em>(no equivalent)</em></td>
+          <td><em>(no equivalent)</em></td>
+          <td><strong class="accent">Natural-language prompt</strong></td>
+        </tr>
+        <tr>
+          <td><em>(no equivalent)</em></td>
+          <td><em>(no equivalent)</em></td>
+          <td><strong class="accent">Safe-outputs sandbox</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <aside class="notes">
+      The last two rows are the new tools in your toolbox.
+      Everything else has a direct TFS analog — that's reassuring.
+    </aside>
+  </section>
+
+  <!-- =========================================================
+       SECTION 5 — PR Summarizer in action  (0:18 – 0:25)
+  ========================================================== -->
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:18 – 0:25</span> &middot; In action</span>
+    <h2>A real workflow: PR Summarizer</h2>
+    <p>
+      Open a PR. The agent reads the diff, classifies risk, checks test coverage,
+      and posts one structured comment — usually within 60 seconds.
+    </p>
+    <div class="cols col-3" style="margin-top:1.2em">
+      <div class="card"><h3>📥 Input</h3><p>Any PR opened against <code>main</code></p></div>
+      <div class="card"><h3>🤖 Agent</h3><p>Claude, with read-only GitHub access</p></div>
+      <div class="card"><h3>📤 Output</h3><p>One markdown comment on the PR</p></div>
+    </div>
+    <p class="muted" style="margin-top:1.4em">Source repo: <code>github.com/dlokanadham1987/gh-aw-demo</code></p>
+    <aside class="notes">
+      We're about to walk through the actual screenshots. This is the high-water mark of the talk.
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:18 – 0:25</span> &middot; In action</span>
+    <h2>Step 1 — Developer opens a PR</h2>
+    <img class="screenshot" src="assets/1-pr-raised.png" alt="A pull request being opened on GitHub">
+    <aside class="notes">
+      Nothing unusual. Developer opens a normal PR. Zero agent-specific UI here.
+      That's the point — it's invisible until it's useful.
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:18 – 0:25</span> &middot; In action</span>
+    <h2>Step 2 — Workflow triggers automatically</h2>
+    <img class="screenshot" src="assets/2-workflow-triggered.png" alt="Workflow triggered by the PR event">
+    <aside class="notes">
+      The Checks tab shows "PR Summarizer" queued. This is the same surface
+      as any other GitHub Actions workflow. Familiar territory.
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:18 – 0:25</span> &middot; In action</span>
+    <h2>Step 3 — Claude executes (6 jobs)</h2>
+    <img class="screenshot" src="assets/3-workflow-executing.png" alt="Workflow executing through its 6 jobs">
+    <aside class="notes">
+      Point out the 6 jobs you saw in the mental-model section:
+      pre_activation → activation → agent → detection → safe_outputs → conclusion.
+      Each is a separate sandboxed step.
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:18 – 0:25</span> &middot; In action</span>
+    <h2>Step 4 — Complete in under a minute</h2>
+    <img class="screenshot" src="assets/4-workflow-completed.png" alt="Workflow completed successfully">
+    <aside class="notes">
+      Total runtime: typically 30-90 seconds. Cost per run: pennies.
+      Mention: this happens on EVERY PR, automatically, no human in the loop.
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:18 – 0:25</span> &middot; In action</span>
+    <h2>Step 5 — Claude posts its review</h2>
+    <img class="screenshot" src="assets/5-claude-comment.png" alt="Claude's PR review comment">
+    <aside class="notes">
+      THIS is the moment. Pause. Let them read it.
+      Then say: "A human reviewer still merges — but they start from this summary
+      instead of a blank diff."
+    </aside>
+  </section>
+
+  <!-- =========================================================
+       SECTION 6 — What's next + Q&A  (0:25 – 0:30)
+  ========================================================== -->
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:25 – 0:30</span> &middot; What's next</span>
+    <h2>Where we go from here</h2>
+    <div class="cols">
+      <div class="card">
+        <h3>Near-term (this quarter)</h3>
+        <ul>
+          <li>Hands-on workshop — write your first workflow</li>
+          <li>Pilot PR Summarizer on one team's repo</li>
+          <li>Pick 2-3 candidate workflows to evaluate</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Workflows worth exploring</h3>
+        <ul>
+          <li>Auto test-failure remediator</li>
+          <li>Daily performance improver</li>
+          <li>Repository quality improver</li>
+          <li>Auto-remediation for security findings</li>
+        </ul>
+      </div>
+    </div>
+    <aside class="notes">
+      Don't commit to specific dates here. Just direction.
+      The "workflows worth exploring" list comes from the gh-aw built-in catalog.
+    </aside>
+  </section>
+
+  <section class="slide">
+    <span class="section-chip"><span class="time">0:25 – 0:30</span> &middot; What's next</span>
+    <h2>Resources</h2>
+    <div class="cols">
+      <div class="card">
+        <h3>To read</h3>
+        <ul>
+          <li><code>github.com/githubnext/gh-aw</code> — official repo</li>
+          <li>Our team wiki: docs 1–4 in <em>GitHub Agentic Workflows</em></li>
+          <li>Joseph Dean's AI Champions session recording</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>To try (after the workshop)</h3>
+        <ul>
+          <li>Clone <code>gh-aw-demo</code> &mdash; experiment</li>
+          <li>Run <code>gh aw add pr-summarizer</code> in a personal repo</li>
+          <li>Open a PR &mdash; watch the magic</li>
+        </ul>
+      </div>
+    </div>
+    <aside class="notes">
+      Hand-wave to the URL — they'll find it. Keep emphasis on the workshop.
+    </aside>
+  </section>
+
+  <section class="slide title">
+    <h1>Questions?</h1>
+    <div class="subtitle">Slides + demo repo: <code>github.com/dlokanadham1987/gh-aw-demo</code></div>
+    <div class="meta" style="margin-top:3em">
+      Thank you.<br>
+      <span class="muted">Press <kbd>Esc</kbd> for overview · <kbd>.</kbd> for notes</span>
+    </div>
+    <aside class="notes">
+      Anticipated questions:
+      - "How much does it cost?" → pennies per run; ANTHROPIC_API_KEY billed to org
+      - "Can we use Copilot instead of Claude?" → yes, engine: copilot
+      - "What if the agent goes rogue?" → safe-outputs + read-only token by default
+      - "Can it modify code?" → only via safe-outputs.create-pull-request, never push directly
+      - "Self-hosted runners?" → yes, same as any GitHub Action
+    </aside>
+  </section>
+
+</div>
+
+<!-- HUD: progress + counter + hints -->
+<div id="hud">
+  <span id="help-hint">← → space to navigate · F fullscreen · . notes · Esc overview · ? help</span>
+  <span id="counter">1 / 20</span>
+</div>
+
+<div id="notes-overlay"></div>
+<div id="overview"></div>
+
+<div id="help">
+  <div class="panel">
+    <h2 style="margin-top:0">Keyboard shortcuts</h2>
+    <table>
+      <tr><td><kbd>→</kbd> <kbd>Space</kbd> <kbd>n</kbd></td><td>Next slide</td></tr>
+      <tr><td><kbd>←</kbd> <kbd>p</kbd></td><td>Previous slide</td></tr>
+      <tr><td><kbd>Home</kbd> / <kbd>End</kbd></td><td>First / last slide</td></tr>
+      <tr><td><kbd>F</kbd></td><td>Toggle fullscreen</td></tr>
+      <tr><td><kbd>.</kbd></td><td>Toggle speaker notes</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>Overview / close overlays</td></tr>
+      <tr><td><kbd>?</kbd></td><td>This help</td></tr>
+    </table>
+    <p class="muted" style="margin-top:1.2em; font-family:var(--sans)">
+      Click anywhere — left half = previous, right half = next.
+    </p>
+  </div>
+</div>
+
+<script src="slides.js"></script>
+</body>
+</html>
