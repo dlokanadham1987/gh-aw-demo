@@ -21,6 +21,12 @@ def list_notes() -> list[Note]:
     return store.list()
 
 
+@app.get("/notes/search", response_model=list[Note])
+def search_notes(q: str) -> list[Note]:
+    needle = q.lower()
+    return [n for n in store.list() if needle in n.title.lower()]
+
+
 @app.get("/notes/{note_id}", response_model=Note)
 def get_note(note_id: int) -> Note:
     note = store.get(note_id)
