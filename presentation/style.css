@@ -1,18 +1,25 @@
-/* ---------- GitHub-dark themed slide deck ---------- */
+/* ---------- Midnight Slate themed slide deck ----------
+   Cleaner contrast than GitHub-dark, brighter accents,
+   larger type for video / projector readability.
+---------------------------------------------------------- */
 :root {
-  --bg: #0d1117;
-  --bg-elev: #161b22;
-  --border: #30363d;
-  --fg: #e6edf3;
-  --fg-muted: #7d8590;
-  --accent: #2f81f7;
-  --accent-2: #a371f7;
-  --green: #3fb950;
-  --orange: #d29922;
-  --red: #f85149;
-  --code-bg: #0b1020;
-  --mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
-  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Inter", Roboto, sans-serif;
+  /* Base palette — deeper navy than GitHub dark */
+  --bg:        #0b1220;
+  --bg-elev:   #131c2e;
+  --border:    #2a3550;
+  --fg:        #f1f5f9;
+  --fg-muted:  #94a3b8;
+
+  /* Accents (Tailwind-400-ish — bright, friendly, readable on dark) */
+  --accent:    #60a5fa;   /* blue-400 */
+  --accent-2:  #c084fc;   /* purple-400 */
+  --green:     #4ade80;   /* green-400 */
+  --orange:    #fb923c;   /* orange-400 */
+  --red:       #f87171;   /* red-400 */
+
+  --code-bg:   #060a14;
+  --mono:      ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --sans:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -51,9 +58,9 @@ html, body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ---------- Typography ---------- */
+/* ---------- Typography (bumped ~25% larger across the board) ---------- */
 .slide h1 {
-  font-size: clamp(2.2rem, 4.5vw, 4rem);
+  font-size: clamp(2.6rem, 5.5vw, 5rem);
   font-weight: 700;
   margin: 0 0 0.5em;
   line-height: 1.1;
@@ -61,7 +68,7 @@ html, body {
 }
 
 .slide h2 {
-  font-size: clamp(1.5rem, 2.6vw, 2.4rem);
+  font-size: clamp(1.9rem, 3.2vw, 3rem);
   font-weight: 600;
   margin: 0 0 0.8em;
   color: var(--fg);
@@ -69,24 +76,24 @@ html, body {
 }
 
 .slide h3 {
-  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+  font-size: clamp(1.3rem, 1.95vw, 1.8rem);
   font-weight: 600;
   margin: 0 0 0.4em;
   color: var(--accent);
 }
 
 .slide p, .slide li {
-  font-size: clamp(1rem, 1.5vw, 1.4rem);
+  font-size: clamp(1.2rem, 1.75vw, 1.65rem);
   line-height: 1.55;
   color: var(--fg);
-  margin: 0.2em 0;
+  margin: 0.25em 0;
 }
 
 .slide ul {
   padding-left: 1.4em;
 }
 
-.slide li { margin: 0.5em 0; }
+.slide li { margin: 0.55em 0; }
 
 .slide .muted { color: var(--fg-muted); }
 .slide .accent { color: var(--accent); }
@@ -106,8 +113,8 @@ html, body {
   border-radius: 8px;
   padding: 1.1em 1.3em;
   overflow: auto;
-  font-size: clamp(0.85rem, 1.05vw, 1.1rem);
-  line-height: 1.5;
+  font-size: clamp(1rem, 1.25vw, 1.3rem);
+  line-height: 1.55;
 }
 
 .slide :not(pre) > code {
@@ -117,14 +124,14 @@ html, body {
   padding: 0.1em 0.4em;
 }
 
-/* ---------- Section chip + agenda ---------- */
+/* ---------- Section chip (now without time range — just the section name) ---------- */
 .section-chip {
   display: inline-block;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-family: var(--mono);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  padding: 0.3em 0.8em;
+  padding: 0.35em 0.95em;
   border-radius: 999px;
   background: var(--bg-elev);
   border: 1px solid var(--border);
@@ -133,23 +140,24 @@ html, body {
   align-self: flex-start;
 }
 
-.section-chip .time { color: var(--accent); }
+.section-chip .time { color: var(--accent); }  /* unused now, kept harmless */
 
 /* ---------- Title slide ---------- */
 .slide.title {
-  background: radial-gradient(ellipse at top left, rgba(47,129,247,0.16), transparent 50%),
-              radial-gradient(ellipse at bottom right, rgba(163,113,247,0.14), transparent 50%);
+  background:
+    radial-gradient(ellipse at top left, rgba(96,165,250,0.18), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(192,132,252,0.16), transparent 50%);
 }
 
-.slide.title h1 { font-size: clamp(2.8rem, 6vw, 5.5rem); }
+.slide.title h1 { font-size: clamp(3.2rem, 7vw, 6.5rem); }
 .slide.title .subtitle {
-  font-size: clamp(1.2rem, 2vw, 1.8rem);
+  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
   color: var(--fg-muted);
   margin-top: 0.4em;
 }
 .slide.title .meta {
   margin-top: 2em;
-  font-size: 1rem;
+  font-size: 1.15rem;
   color: var(--fg-muted);
   font-family: var(--mono);
 }
@@ -178,19 +186,19 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 0.6em;
-  font-size: clamp(0.95rem, 1.3vw, 1.2rem);
+  font-size: clamp(1.1rem, 1.55vw, 1.4rem);
 }
 
 th, td {
   text-align: left;
-  padding: 0.7em 0.9em;
+  padding: 0.75em 0.95em;
   border-bottom: 1px solid var(--border);
 }
 
 th {
   font-weight: 600;
   color: var(--fg-muted);
-  font-size: 0.85em;
+  font-size: 0.9em;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -209,9 +217,9 @@ th {
   background: var(--bg-elev);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 0.9em 1.3em;
+  padding: 0.95em 1.4em;
   font-family: var(--mono);
-  font-size: clamp(0.85rem, 1.1vw, 1.1rem);
+  font-size: clamp(1rem, 1.3vw, 1.3rem);
 }
 
 .flow .box.you      { border-color: var(--accent); }
@@ -221,7 +229,7 @@ th {
 .flow .arrow {
   color: var(--fg-muted);
   font-family: var(--mono);
-  font-size: 1.4rem;
+  font-size: 1.7rem;
 }
 
 /* ---------- Screenshots ---------- */
@@ -235,7 +243,7 @@ th {
   box-shadow: 0 10px 40px rgba(0,0,0,0.5);
 }
 
-/* ---------- HUD (progress + counter) ---------- */
+/* ---------- HUD (progress bar at top + slide counter at bottom) ---------- */
 #hud {
   position: fixed;
   bottom: 0;
@@ -244,9 +252,8 @@ th {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.6em 1em;
+  padding: 0.85em 1.4em;
   font-family: var(--mono);
-  font-size: 0.8rem;
   color: var(--fg-muted);
   pointer-events: none;
   z-index: 10;
@@ -262,15 +269,24 @@ th {
   z-index: 20;
 }
 
+/* Bigger, bolder slide-number pill — primary nav cue */
 #counter {
-  background: rgba(13,17,23,0.7);
-  padding: 0.3em 0.7em;
-  border-radius: 4px;
+  background: rgba(11, 18, 32, 0.85);
+  padding: 0.55em 1.1em;
+  border-radius: 8px;
   border: 1px solid var(--border);
+  color: var(--fg);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   pointer-events: auto;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
 }
 
-#help-hint { opacity: 0.6; }
+#help-hint {
+  opacity: 0.55;
+  font-size: 0.85rem;
+}
 
 /* ---------- Speaker notes overlay ---------- */
 #notes-overlay {
@@ -279,21 +295,21 @@ th {
   left: 0;
   right: 0;
   max-height: 40vh;
-  background: rgba(22,27,34,0.97);
+  background: rgba(19, 28, 46, 0.97);
   border-top: 2px solid var(--accent);
-  padding: 1.2em 2em;
-  font-size: 1rem;
+  padding: 1.4em 2em;
+  font-size: 1.15rem;
   color: var(--fg);
   overflow-y: auto;
   display: none;
   z-index: 30;
-  box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
 }
 #notes-overlay.show { display: block; }
 #notes-overlay h4 {
   margin: 0 0 0.4em;
   color: var(--accent);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -303,7 +319,7 @@ th {
 #overview {
   position: fixed;
   inset: 0;
-  background: rgba(13,17,23,0.95);
+  background: rgba(11, 18, 32, 0.96);
   display: none;
   z-index: 40;
   padding: 3vh 3vw;
@@ -313,29 +329,30 @@ th {
 .thumb {
   background: var(--bg-elev);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 1em;
   cursor: pointer;
   transition: border-color 0.15s ease, transform 0.15s ease;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--fg);
-  min-height: 9em;
+  min-height: 9.5em;
   overflow: hidden;
 }
 .thumb:hover { border-color: var(--accent); transform: translateY(-2px); }
 .thumb .thumb-num {
   font-family: var(--mono);
-  font-size: 0.75rem;
-  color: var(--fg-muted);
-  margin-bottom: 0.4em;
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 0.45em;
 }
-.thumb .thumb-title { font-weight: 600; }
+.thumb .thumb-title { font-weight: 600; font-size: 1.05em; }
 
 /* ---------- Help overlay ---------- */
 #help {
   position: fixed;
   inset: 0;
-  background: rgba(13,17,23,0.92);
+  background: rgba(11, 18, 32, 0.94);
   display: none;
   align-items: center;
   justify-content: center;
@@ -347,7 +364,7 @@ th {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 2em 2.5em;
-  min-width: 30em;
+  min-width: 32em;
   font-family: var(--mono);
 }
 #help kbd {
@@ -355,6 +372,6 @@ th {
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 0.15em 0.5em;
-  font-size: 0.85em;
+  font-size: 0.9em;
 }
-#help table td { border: none; padding: 0.4em 0.8em; }
+#help table td { border: none; padding: 0.45em 0.85em; font-size: 1rem; }
