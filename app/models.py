@@ -10,3 +10,8 @@ class NoteIn(BaseModel):
 class Note(NoteIn):
     id: int
     created_at: datetime
+
+
+class NoteUpdate(BaseModel):
+    title: str | None = None
+    body: str | None = None

@@ -6,7 +6,7 @@ from typing import Dict, List
 
 from pydantic import ValidationError
 
-from .models import Note, NoteIn
+from .models import Note, NoteIn, NoteUpdate
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +52,16 @@ class NoteStore:
 
     def list(self) -> List[Note]:
         return sorted(self._notes.values(), key=lambda n: n.id)
+
+    def update(self, note_id: int, data: NoteUpdate) -> Note | None:
+        note = self._notes.get(note_id)
+        if note is None:
+            return None
+        if data.title is not None:
+            note.title = data.title
+        if data.body is not None:
+            note.body = data.body
+        return note
 
 
 store = NoteStore()
