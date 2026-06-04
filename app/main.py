@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 
 from .models import Note, NoteIn
 from .store import store
@@ -19,6 +19,14 @@ def create_note(payload: NoteIn) -> Note:
 @app.get("/notes", response_model=list[Note])
 def list_notes() -> list[Note]:
     return store.list()
+
+
+@app.get("/notes/search", response_model=list[Note])
+def search_notes(
+    q: str = Query(..., min_length=1, max_length=120),
+) -> list[Note]:
+    needle = q.lower()
+    return [n for n in store.list() if needle in n.title.lower()]
 
 
 @app.get("/notes/{note_id}", response_model=Note)

@@ -1,0 +1,30 @@
+[
+  {
+    "title": "Q2 Roadmap Review",
+    "body": "Prepare slides for sprint review on Friday. Cover roadmap, risks, and OKRs."
+  },
+  {
+    "title": "Refactor auth module",
+    "body": "Replace legacy session handling with JWT-based auth. Estimated 3 days."
+  },
+  {
+    "title": "Buy groceries",
+    "body": "Milk, eggs, bread, coffee, fruit"
+  },
+  {
+    "title": "Read FastAPI docs",
+    "body": "Focus on dependency injection and background tasks chapters"
+  },
+  {
+    "title": "Plan team offsite",
+    "body": "Book venue, send invites, finalize agenda by end of month"
+  },
+  {
+    "title": "Migrate TFS repos to GitHub",
+    "body": "Coordinate with DevOps on pilot repos. Update build pipelines as ci.yml."
+  },
+  {
+    "title": "Pilot agentic workflows",
+    "body": "Roll out PR summarizer + reviewer + autofixer on 2 repos as a pilot."
+  }
+]

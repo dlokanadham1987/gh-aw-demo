@@ -42,3 +42,13 @@ def test_list_notes_sorted():
 def test_get_missing_note_returns_404():
     r = client.get("/notes/999")
     assert r.status_code == 404
+
+
+def test_search_notes_matches_title_case_insensitive():
+    client.post("/notes", json={"title": "Buy milk"})
+    client.post("/notes", json={"title": "Buy bread"})
+    client.post("/notes", json={"title": "Call mom"})
+    r = client.get("/notes/search?q=BUY")
+    assert r.status_code == 200
+    titles = [n["title"] for n in r.json()]
+    assert sorted(titles) == ["Buy bread", "Buy milk"]
