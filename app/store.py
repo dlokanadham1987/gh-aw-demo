@@ -1,9 +1,14 @@
 import json
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List
 
+from pydantic import ValidationError
+
 from .models import Note, NoteIn
+
+logger = logging.getLogger(__name__)
 
 
 class NoteStore:
@@ -28,8 +33,8 @@ class NoteStore:
                 seed_data = json.load(f)
             for item in seed_data:
                 self.add(NoteIn(title=item["title"], body=item.get("body", "")))
-        except (json.JSONDecodeError, KeyError, OSError) as e:
-            print(f"[seed] failed to load seed.json: {e}")
+        except (json.JSONDecodeError, KeyError, OSError, TypeError, ValidationError) as e:
+            logger.warning("failed to load seed.json: %s", e)
 
     def add(self, data: NoteIn) -> Note:
         note = Note(
