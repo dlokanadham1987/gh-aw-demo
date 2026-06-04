@@ -57,11 +57,12 @@ class NoteStore:
         note = self._notes.get(note_id)
         if note is None:
             return None
-        if data.title is not None:
-            note.title = data.title
-        if data.body is not None:
-            note.body = data.body
-        return note
+        updates = data.model_dump(exclude_unset=True, exclude_none=True)
+        if not updates:
+            return note
+        updated = note.model_copy(update=updates)
+        self._notes[note_id] = updated
+        return updated
 
 
 store = NoteStore()

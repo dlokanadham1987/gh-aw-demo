@@ -13,5 +13,5 @@ class Note(NoteIn):
 
 
 class NoteUpdate(BaseModel):
-    title: str | None = None
-    body: str | None = None
+    title: str | None = Field(default=None, min_length=1, max_length=120)
+    body: str | None = Field(default=None, max_length=4000)

@@ -52,3 +52,32 @@ def test_search_notes_matches_title_case_insensitive():
     assert r.status_code == 200
     titles = [n["title"] for n in r.json()]
     assert sorted(titles) == ["Buy bread", "Buy milk"]
+
+
+def test_patch_note_updates_title_only():
+    created = client.post("/notes", json={"title": "Old", "body": "keep"}).json()
+    r = client.patch(f"/notes/{created['id']}", json={"title": "New"})
+    assert r.status_code == 200
+    note = r.json()
+    assert note["title"] == "New"
+    assert note["body"] == "keep"
+
+
+def test_patch_note_updates_body_only():
+    created = client.post("/notes", json={"title": "Title", "body": "old body"}).json()
+    r = client.patch(f"/notes/{created['id']}", json={"body": "new body"})
+    assert r.status_code == 200
+    note = r.json()
+    assert note["title"] == "Title"
+    assert note["body"] == "new body"
+
+
+def test_patch_missing_note_returns_404():
+    r = client.patch("/notes/999", json={"title": "x"})
+    assert r.status_code == 404
+
+
+def test_patch_note_rejects_empty_title():
+    created = client.post("/notes", json={"title": "Original"}).json()
+    r = client.patch(f"/notes/{created['id']}", json={"title": ""})
+    assert r.status_code == 422
