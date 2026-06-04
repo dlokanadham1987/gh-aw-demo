@@ -60,13 +60,15 @@ For every finding you raise, use this exact format:
 ### 5. Secrets & config
 - `.env`, `*.pem`, `*.key`, `id_rsa`, `secrets.json` added to the diff.
 - Secret-looking literals in code (long base64, `AKIA…`, `ghp_…`, `sk-…`).
-- New CI workflows that print `${{ secrets.* }}` to logs.
+- New CI workflows that echo repo-secret interpolations into the run logs
+  (any `run:` step that prints a value derived from a repository secret).
 
 ### 6. CI / workflow changes
 - Changes under `.github/workflows/` that add `pull_request_target`,
   `workflow_run`, or set `permissions:` to `write-all`.
-- New `actions/checkout` with `ref: ${{ github.event.pull_request.head.ref }}`
-  combined with privileged token usage.
+- New `actions/checkout` configured to check out the PR head ref
+  (i.e. attacker-controlled code) and combined in the same job with
+  privileged token usage.
 
 ## Output contract
 
