@@ -11,6 +11,7 @@ dist/
 build/
 
 # Per-developer / per-machine state (do NOT commit)
-.claude/
+.claude/*
+!.claude/skills/
 .aw/
 
